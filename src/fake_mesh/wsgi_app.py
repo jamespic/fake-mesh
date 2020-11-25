@@ -147,8 +147,9 @@ Metadata = collections.namedtuple('Metadata', ['chunks', 'recipient', 'extra_hea
 
 
 class FakeMeshApplication(object):
-    def __init__(self, storage_dir=None, shared_key=b"BackBone"):
+    def __init__(self, storage_dir=None, shared_key=b"BackBone", client_password="password"):
         self._shared_key = shared_key
+        self._client_password = client_password
         if not storage_dir:
             storage_dir = tempfile.mkdtemp()
         self.file_dir = os.path.join(storage_dir, 'storage')
@@ -199,7 +200,7 @@ class FakeMeshApplication(object):
             auth_data = auth_data[8:]
 
         mailbox, nonce, nonce_count, ts, hashed = auth_data.split(":")
-        expected_password = "password"
+        expected_password = self._client_password
         hash_data = ":".join([
             mailbox, nonce, nonce_count, expected_password, ts
         ])
