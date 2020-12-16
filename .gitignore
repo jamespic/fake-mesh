@@ -5,3 +5,4 @@ dist/
 *.whl
 build/
 fake_mesh_dir
+.tox/
