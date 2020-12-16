@@ -32,7 +32,8 @@ except ImportError:
 IO_BLOCK_SIZE = 65536
 
 
-TIMESTAMP_FORMAT = '%Y%m%d%H%M%S%f'
+ID_TIMESTAMP_FORMAT = '%Y%m%d%H%M%S%f'
+TIMESTAMP_FORMAT = '%Y%m%d%H%M%S'
 
 
 BadRequest = Response("Bad Request", status=400)
@@ -258,7 +259,7 @@ class FakeMeshApplication(object):
             response = {
                 "count": count,
                 "internalID": "{ts}_{rand:06d}_{ts2}".format(
-                    ts=datetime.datetime.utcnow().strftime(TIMESTAMP_FORMAT),
+                    ts=datetime.datetime.utcnow().strftime(ID_TIMESTAMP_FORMAT),
                     rand=random.randint(0, 999999),
                     ts2=int(time.time())
                 ),
@@ -441,7 +442,7 @@ class FakeMeshApplication(object):
         with self.db_env.begin(self.increment_db, write=True) as tx:
             message_num = int(tx.get(b'increment', b'0'))
             tx.put(b'increment', str(message_num + 1).encode('ascii'))
-            ts = self.timestamp_source().strftime(TIMESTAMP_FORMAT)
+            ts = self.timestamp_source().strftime(ID_TIMESTAMP_FORMAT)
             return "{ts}_{num:09d}".format(ts=ts, num=message_num)
 
     def list_messages(self, mailbox_id):
