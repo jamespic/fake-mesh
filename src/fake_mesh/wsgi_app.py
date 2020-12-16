@@ -32,7 +32,7 @@ except ImportError:
 IO_BLOCK_SIZE = 65536
 
 
-TIMESTAMP_FORMAT = '%Y%m%d%H%M%S'
+TIMESTAMP_FORMAT = '%Y%m%d%H%M%S%f'
 
 
 BadRequest = Response("Bad Request", status=400)
@@ -308,7 +308,9 @@ class FakeMeshApplication(object):
             headers = {_OPTIONAL_HEADERS[key]: value
                        for key, value in environ.items()
                        if key in _OPTIONAL_HEADERS}
-            headers['Mex-Filename'] = "{}.dat".format(message_id)
+
+            if 'Mex-FileName' not in headers:
+                headers['Mex-FileName'] = "{}.dat".format(message_id)
             headers['Mex-Statustimestamp'] = datetime.datetime.now().strftime(TIMESTAMP_FORMAT)
             headers['Mex-Statussuccess'] = 'SUCCESS'
             headers['Mex-Statusdescription'] = "Transferred to recipient mailbox"
