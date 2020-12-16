@@ -32,7 +32,7 @@ except ImportError:
 IO_BLOCK_SIZE = 65536
 
 
-TIMESTAMP_FORMAT = '%Y%m%d%H%M%S%f'
+TIMESTAMP_FORMAT = '%Y%m%d%H%M%S'
 
 
 BadRequest = Response("Bad Request", status=400)
@@ -147,8 +147,9 @@ Metadata = collections.namedtuple('Metadata', ['chunks', 'recipient', 'extra_hea
 
 
 class FakeMeshApplication(object):
-    def __init__(self, storage_dir=None, shared_key=b"BackBone"):
+    def __init__(self, storage_dir=None, shared_key=b"BackBone", client_password="password"):
         self._shared_key = shared_key
+        self._client_password = client_password
         if not storage_dir:
             storage_dir = tempfile.mkdtemp()
         self.file_dir = os.path.join(storage_dir, 'storage')
@@ -199,7 +200,7 @@ class FakeMeshApplication(object):
             auth_data = auth_data[8:]
 
         mailbox, nonce, nonce_count, ts, hashed = auth_data.split(":")
-        expected_password = "password"
+        expected_password = self._client_password
         hash_data = ":".join([
             mailbox, nonce, nonce_count, expected_password, ts
         ])
@@ -307,9 +308,11 @@ class FakeMeshApplication(object):
             headers = {_OPTIONAL_HEADERS[key]: value
                        for key, value in environ.items()
                        if key in _OPTIONAL_HEADERS}
+            headers['Mex-Filename'] = "{}.dat".format(message_id)
             headers['Mex-Statustimestamp'] = datetime.datetime.now().strftime(TIMESTAMP_FORMAT)
             headers['Mex-Statussuccess'] = 'SUCCESS'
             headers['Mex-Statusdescription'] = "Transferred to recipient mailbox"
+            headers['Mex-Statusevent'] = 'TRANSFER'
             chunk_header = environ.get('HTTP_MEX_CHUNK_RANGE', '1:1')
             chunk_count = int(chunk_header.rsplit(':', 1)[1])
             metadata = Metadata(chunk_count, recipient, headers, chunk_count == 1)
