@@ -28,6 +28,8 @@ try:
 except ImportError:
     import pickle
 
+from fake_mesh.key_helper import get_shared_key_from_environ
+
 
 IO_BLOCK_SIZE = 65536
 
@@ -148,7 +150,7 @@ Metadata = collections.namedtuple('Metadata', ['chunks', 'recipient', 'extra_hea
 
 
 class FakeMeshApplication(object):
-    def __init__(self, storage_dir=None, shared_key=b"BackBone", client_password="password"):
+    def __init__(self, storage_dir=None, shared_key=get_shared_key_from_environ(), client_password="password"):
         self._shared_key = shared_key
         self._client_password = client_password
         if not storage_dir:
