@@ -1,4 +1,3 @@
-mock
 pip
 setuptools
 setuptools_scm[toml]

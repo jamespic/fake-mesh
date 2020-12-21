@@ -105,6 +105,14 @@ class MeshClientTest(TestCase):
             self.assertTrue(msg.encrypted)
             self.assertTrue(msg.compressed)
 
+    def test_endpoint_lookup(self):
+        result = self.alice.lookup_endpoint('ORG1', 'WF1')
+        result_list = result['results']
+        self.assertEqual(len(result_list), 1)
+        self.assertEqual(result_list[0]['address'], 'ORG1HC001')
+        self.assertEqual(result_list[0]['description'], 'ORG1 WF1 endpoint')
+        self.assertEqual(result_list[0]['endpoint_type'], 'MESH')
+
 
 if __name__ == "__main__":
     main()

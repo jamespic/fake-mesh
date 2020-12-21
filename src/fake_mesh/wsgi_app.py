@@ -185,7 +185,8 @@ class FakeMeshApplication(object):
                         }
                     )
                 ),
-                '/_fake_ndr': self._fake_ndr
+                '/_fake_ndr': self._fake_ndr,
+                '/endpointlookup/mesh': self.endpoint_lookup
             }
         )(environ, start_response)
 
@@ -337,6 +338,26 @@ class FakeMeshApplication(object):
 
             message = json.dumps({'messageID': message_id})
             return Response(message, status=202)
+
+    @responder
+    def endpoint_lookup(self, environ, start_response):
+        org_code = pop_path_info(environ)
+        workflow_id = pop_path_info(environ)
+        if not org_code or not workflow_id:
+            return NotFound
+        result = {
+            "query_id": "{ts:%Y%m%d%H%M%S%f}_{rnd:06x}_{ts:%s}".format(
+                ts=datetime.datetime.now(),
+                rnd=random.randint(0, 0xffffff)),
+            "results": [
+                {
+                    "address": "{}HC001".format(org_code),
+                    "description": "{} {} endpoint".format(org_code, workflow_id),
+                    "endpoint_type": "MESH"
+                }
+            ]
+        }
+        return Response(json.dumps(result), content_type='application/json')
 
     @responder
     def _fake_ndr(self, environ, start_response):
