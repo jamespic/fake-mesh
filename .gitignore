@@ -7,3 +7,4 @@ build/
 fake_mesh_dir
 .tox/
 .idea/
+.eggs/

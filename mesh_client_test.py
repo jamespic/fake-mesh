@@ -113,6 +113,29 @@ class MeshClientTest(TestCase):
         self.assertEqual(result_list[0]['description'], 'ORG1 WF1 endpoint')
         self.assertEqual(result_list[0]['endpoint_type'], 'MESH')
 
+    def test_tracking(self):
+        alice = self.alice
+        bob = self.bob
+        tracking_id = 'Message1'
+        msg_id = alice.send_message(self.bob_mailbox, b'Hello World', local_id=tracking_id)
+        self.assertEqual(alice.get_tracking_info(message_id=msg_id)['status'], 'Accepted')
+        self.assertIsNone(alice.get_tracking_info(message_id=msg_id)['downloadTimestamp'])
+        bob.retrieve_message(msg_id).read()
+        self.assertIsNotNone(alice.get_tracking_info(message_id=msg_id)['downloadTimestamp'])
+        bob.acknowledge_message(msg_id)
+        self.assertEqual(alice.get_tracking_info(message_id=msg_id)['status'], 'Acknowledged')
+
+    def test_msg_id_tracking(self):
+        alice = self.alice
+        bob = self.bob
+        msg_id = alice.send_message(self.bob_mailbox, b'Hello World')
+        self.assertEqual(alice.get_tracking_info(message_id=msg_id)['status'], 'Accepted')
+        self.assertIsNone(alice.get_tracking_info(message_id=msg_id)['downloadTimestamp'])
+        bob.retrieve_message(msg_id).read()
+        self.assertIsNotNone(alice.get_tracking_info(message_id=msg_id)['downloadTimestamp'])
+        bob.acknowledge_message(msg_id)
+        self.assertEqual(alice.get_tracking_info(message_id=msg_id)['status'], 'Acknowledged')
+
 
 if __name__ == "__main__":
     main()
