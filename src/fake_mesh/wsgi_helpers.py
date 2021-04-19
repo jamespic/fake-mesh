@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import logging
 from datetime import datetime
+import time
 
 import sys
 
@@ -69,7 +70,7 @@ class LoggingMiddleware(object):
 
         result = self._app(environ, inner_start_response)
         self._logger.info(
-            "%s - %s %s -> %s", datetime.now().timestamp(),
+            "%s - %s %s -> %s", time.time(),
             method, uri, inner_start_response.status
         )
         return result

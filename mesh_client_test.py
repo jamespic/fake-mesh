@@ -27,7 +27,7 @@ class MeshClientTest(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.server = make_server(host='127.0.0.1', port=8829)
+        cls.server = make_server(host='127.0.0.1', port=8829, logging=True)
         cls.server_thread = threading.Thread(target=cls.server.start)
         cls.server_thread.start()
 
