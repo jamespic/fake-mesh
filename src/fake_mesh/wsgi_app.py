@@ -289,7 +289,7 @@ class FakeMeshApplication(object):
     def tracking(self, environ, start_response):
         local_id = pop_path_info(environ)
         qs = get_query_string(environ)
-        message_id = parse_qs(qs).get('messageId', [None])[0]
+        message_id = parse_qs(qs).get('messageID', [None])[0]
         if not local_id and not message_id:
             return BadRequest
         with self.db_env.begin(db=self.tracking_db) as tx:
