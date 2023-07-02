@@ -1,3 +1,8 @@
+
+# This project is  no longer being actively maintained please see [mesh-sandbox](https://github.com/NHSDigital/mesh-sandbox)  which provides a locally testable version of MESH and is maintained by the MESH team  
+
+
+--------------------------------------------
 Fake MESH
 =========
 
